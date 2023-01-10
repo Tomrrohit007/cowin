@@ -13,7 +13,7 @@ const apiStatusContant = {
 
 class CowinDashboard extends Component {
   state = {
-    isLoading: true,
+    isLoading: false,
     last7DaysVaccination: [],
     vaccinationByAge: [],
     vaccinationByGender: [],
@@ -70,16 +70,18 @@ class CowinDashboard extends Component {
 
   getData = async () => {
     const response = await fetch('https://apis.ccbp.in/covid-vaccination-data')
-    let data = await response.json()
+    
+    if (response.ok) {
+      let data = await response.json()
 
-    const vaccinationByAge = data.vaccination_by_age
-    const vaccinationByGender = data.vaccination_by_gender
-    const last7DaysVaccination = data.last_7_days_vaccination.map(each => ({
+      const vaccinationByAge = data.vaccination_by_age
+      const vaccinationByGender = data.vaccination_by_gender
+      const last7DaysVaccination = data.last_7_days_vaccination.map(each => ({
       dose1: each.dose_1,
       dose2: each.dose_2,
       vaccineDate: each.vaccine_date,
     }))
-    if (response.ok) {
+      
       this.setState({
         last7DaysVaccination,
         vaccinationByGender,
@@ -88,7 +90,7 @@ class CowinDashboard extends Component {
         isLoading: false,
       })
     } else {
-      this.setState({apiStatus: apiStatusContant.failed, isloading: false})
+      this.setState({apiStatus: apiStatusContant.failed, isLoading: false})
     }
   }
 
